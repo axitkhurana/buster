@@ -1,20 +1,20 @@
 """Ghost Buster. Static site generator for Ghost.
 
 Usage:
-  buster.py generate [--domain=<local-address>]
-  buster.py preview
-  buster.py setup [--gh-repo=<repo-url>]
-  buster.py deploy
+  buster.py generate [--domain=<local-address>] [--dir=<path>]
+  buster.py preview [--dir=<path>]
+  buster.py setup [--gh-repo=<repo-url>] [--dir=<path>]
+  buster.py deploy [--dir=<path>]
   buster.py (-h | --help)
   buster.py --version
 
 Options:
   -h --help                 Show this screen.
   --version                 Show version.
+  --dir=<path>              Path of directory to store static pages.
   --domain=<local-address>  Address of local ghost installation [default: local.tryghost.org].
   --gh-repo=<repo-url>      URL of your gh-pages repository.
 """
-# XXX Assume static dir to be current dir if not specified in args
 
 import os
 import re
@@ -23,11 +23,13 @@ import SocketServer
 import SimpleHTTPServer
 from docopt import docopt
 from time import gmtime, strftime
-
-STATIC_DIR = 'static'
+from git import Repo
 
 arguments = docopt(__doc__, version='0.1')
-static_path = os.path.join(os.path.dirname(__file__), STATIC_DIR)
+if arguments['dir']:
+    STATIC_PATH = arguments['dir']
+else:
+    STATIC_PATH = os.path.join(os.path.dirname(__file__), 'static')
 
 if arguments['generate']:
     command = ("wget \\"
@@ -37,12 +39,12 @@ if arguments['generate']:
                  "--no-parent \\"                # don't go to parent level
                  "--directory-prefix {1} \\"     # download contents to static/ folder
                  "--no-host-directories \\"      # don't create domain named folder
-                 "{0}").format(arguments['--domain'], STATIC_DIR)
+                 "{0}").format(arguments['--domain'], STATIC_PATH)
 
     os.system(command)
 
 elif arguments['preview']:
-    os.chdir(static_path)
+    os.chdir(STATIC_PATH)
 
     Handler = SimpleHTTPServer.SimpleHTTPRequestHandler
     httpd = SocketServer.TCPServer(("", 9000), Handler)
@@ -58,15 +60,12 @@ elif arguments['setup']:
         repo_url = raw_input("Enter the Github repository URL:\n").strip()
 
     # Create a fresh new static files directory
-    if os.path.isdir(static_path):
+    if os.path.isdir(STATIC_PATH):
         confirm = raw_input("This will destroy everything inside static/."
                        " Are you sure you want to continue? (y/N)").strip()
         if confirm != 'y' or confirm != 'Y':
             sys.exit(0)
-        shutil.rmtree(static_path)
-
-    os.mkdir(static_path)
-    os.chdir(static_path)
+        shutil.rmtree(STATIC_PATH)
 
     # User/Organization page -> master branch
     # Project page -> gh-pages branch
@@ -76,20 +75,25 @@ elif arguments['setup']:
         branch = 'master'
 
     # Prepare git repository
-    os.system("git init")
+    repo = Repo.init(STATIC_PATH)
+    git = repo.git
+
     if branch == 'gh-pages':
-        os.system("git checkout -b gh-pages")
-    os.system("git remote add origin {}".format(repo_url))
+        git.checkout(b='gh-pages')
+    repo.create_remote('origin', repo_url)
 
     print "All set! You can generate and deploy now."
 
 elif arguments['deploy']:
-    os.chdir(static_path)
-    os.system("git add -A .")
+    repo = Repo(STATIC_PATH)
+    index = repo.index
+    index.add('.')
 
     current_time = strftime("%Y-%m-%d %H:%M:%S", gmtime())
-    os.system("git commit -m 'Blog update at {}'".format(current_time))
+    index.commit('Blog update at {}'.format(current_time))
 
+    origin = repo.remote.origin
+    origin.push()
     os.system("git push origin {}".format(branch))
     print "Good job! Deployed to Github Pages."
 

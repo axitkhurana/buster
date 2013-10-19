@@ -1,10 +1,11 @@
 """Ghost Buster. Static site generator for Ghost.
 
 Usage:
+  buster.py setup [--gh-repo=<repo-url>] [--dir=<path>]
   buster.py generate [--domain=<local-address>] [--dir=<path>]
   buster.py preview [--dir=<path>]
-  buster.py setup [--gh-repo=<repo-url>] [--dir=<path>]
   buster.py deploy [--dir=<path>]
+  buster.py add-domain <domain-name> [--dir=<path>]
   buster.py (-h | --help)
   buster.py --version
 
@@ -26,10 +27,7 @@ from time import gmtime, strftime
 from git import Repo
 
 arguments = docopt(__doc__, version='0.1')
-if arguments['dir']:
-    STATIC_PATH = arguments['dir']
-else:
-    STATIC_PATH = os.path.join(os.path.dirname(__file__), 'static')
+STATIC_PATH = arguments.get('dir', os.path.join(os.path.dirname(__file__), 'static'))
 
 if arguments['generate']:
     command = ("wget \\"
@@ -86,16 +84,21 @@ elif arguments['setup']:
 
 elif arguments['deploy']:
     repo = Repo(STATIC_PATH)
-    index = repo.index
-    index.add('.')
+    repo.git.add('.')
 
     current_time = strftime("%Y-%m-%d %H:%M:%S", gmtime())
-    index.commit('Blog update at {}'.format(current_time))
+    repo.index.commit('Blog update at {}'.format(current_time))
 
-    origin = repo.remote.origin
-    origin.push()
-    os.system("git push origin {}".format(branch))
+    origin = repo.remotes.origin
+    repo.git.execute(['git', 'push', '-u', origin.name, repo.active_branch.name])
     print "Good job! Deployed to Github Pages."
 
-elif arguments['domain']:
-    pass
+elif arguments['add-domain']:
+    repo = Repo(STATIC_PATH)
+    custom_domain = arguments['<domain-name>']
+
+    file_path = os.path.join(STATIC_PATH, 'CNAME')
+    with open(file_path, 'w') as f:
+        f.write(custom_domain)
+
+    print "Added CNAME file to repo. Use `deploy` to deploy"

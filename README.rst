@@ -39,6 +39,18 @@ path using ``[--dir=<path>]`` option to any of the above commands.
 
 Don't forget to change your blog URL in config.js in Ghost.
 
+
+The Installation
+----------------
+
+Installing Buster is easy with pip::
+
+    $ pip install buster
+
+You'll then have the wonderful ``buster`` command available.
+
+You could also clone the source and use the ``buster.py`` file directly.
+
 Requirements
 ------------
 

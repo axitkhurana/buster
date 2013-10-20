@@ -16,7 +16,7 @@ with open("requirements.txt") as f:
 setup(name="buster",
             version=_version.__version__,
             description="Static site generator for Ghost and Github",
-            long_description=open("README.md").read(),
+            long_description=open("README.rst").read(),
             author="Akshit Khurana",
             author_email="axitkhurana@gmail.com",
             url="https://github.com/axitkhurana/buster",

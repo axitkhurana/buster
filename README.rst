@@ -1,8 +1,8 @@
 Buster
 ======
 
-Super simple, Totally awesome, Brute force **static site generator for
-`Ghost <http://ghost.org>`__**.
+Super simple, Totally awesome, Brute force **static site generator for**
+`Ghost <http://ghost.org>`__.
 
 *Generate Static Pages. Preview. Deploy to Github Pages.*
 
@@ -78,5 +78,5 @@ new one. Pull requests welcome!
 
 --------------
 
-*Made with `jugaad <http://en.wikipedia.org/wiki/Jugaad>`__ in
-`Dilli <http://en.wikipedia.org/wiki/Delhi>`__.*
+*Made with* `jugaad <http://en.wikipedia.org/wiki/Jugaad>`__ *in*
+`Dilli <http://en.wikipedia.org/wiki/Delhi>`__.

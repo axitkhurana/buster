@@ -4,7 +4,7 @@ Buster
 Super simple, Totally awesome, Brute force **static site generator for**
 `Ghost <http://ghost.org>`__.
 
-Start with a clean, no commits Github repository:
+Start with a clean, no commits Github repository.
 
 *Generate Static Pages. Preview. Deploy to Github Pages.*
 
@@ -43,7 +43,7 @@ Don't forget to change your blog URL in config.js in Ghost.
 The Installation
 ----------------
 
-Installing Buster is easy with pip::
+Installing Buster is easy with pip:
 
     $ pip install buster
 
@@ -86,6 +86,7 @@ Inspired by THE GhostBusters.
    :alt: Ghost Buster Movie Poster
 
    Ghost Buster Movie
+
 Contributing
 ------------
 

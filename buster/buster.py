@@ -112,5 +112,8 @@ def main():
 
         print "Added CNAME file to repo. Use `deploy` to deploy"
 
+    else:
+        print __doc__
+
 if __name__ == '__main__':
     main()

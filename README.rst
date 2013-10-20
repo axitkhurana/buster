@@ -4,7 +4,10 @@ Buster
 Super simple, Totally awesome, Brute force **static site generator for**
 `Ghost <http://ghost.org>`__.
 
+Start with a clean, no commits Github repository:
+
 *Generate Static Pages. Preview. Deploy to Github Pages.*
+
 
 The interface
 -------------
@@ -34,6 +37,8 @@ Buster assumes you have ``static/`` folder in your current directory (or
 creates one during ``setup`` command). You can specify custom directory
 path using ``[--dir=<path>]`` option to any of the above commands.
 
+Don't forget to change your blog URL in config.js in Ghost.
+
 Requirements
 ------------
 
@@ -58,7 +63,7 @@ you haven't tried it out yet, check it out. You'll love it.
 
 The Ghost Foundation is not-for-profit organization funding open source
 software and trying to completely change the world of online publishing.
-Consider `donating to Ghost <http://ghost.org/about/donate/>`__
+Consider `donating to Ghost <http://ghost.org/about/donate/>`__.
 
 Buster?
 ~~~~~~~

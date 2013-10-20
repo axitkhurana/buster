@@ -83,6 +83,11 @@ def main():
             git.checkout(b='gh-pages')
         repo.create_remote('origin', repo_url)
 
+        # Add README
+        file_path = os.path.join(static_path, 'README.md')
+        with open(file_path, 'w') as f:
+            f.write('# Blog\nPowered by [Ghost](http://ghost.org) and [Buster](https://github.com/axitkhurana/buster/).\n')
+
         print "All set! You can generate and deploy now."
 
     elif arguments['deploy']:

@@ -26,19 +26,21 @@ from docopt import docopt
 from time import gmtime, strftime
 from git import Repo
 
+
 def main():
     arguments = docopt(__doc__, version='0.1')
-    static_path = arguments.get('dir', os.path.join(os.path.dirname(__file__), 'static'))
+    static_path = arguments.get('dir',
+                                os.path.join(os.getcwd(), 'static'))
 
     if arguments['generate']:
         command = ("wget \\"
-                     "--recursive \\"                # follow links to download entire site
-                     "--page-requisites \\"          # grab everything: css / inlined images
-                     "--domains {0} \\"              # don't grab anything outside ghost
-                     "--no-parent \\"                # don't go to parent level
-                     "--directory-prefix {1} \\"     # download contents to static/ folder
-                     "--no-host-directories \\"      # don't create domain named folder
-                     "{0}").format(arguments['--domain'], static_path)
+                   "--recursive \\"             # follow links to download entire site
+                   "--page-requisites \\"       # grab everything: css / inlined images
+                   "--domains {0} \\"           # don't grab anything outside ghost
+                   "--no-parent \\"             # don't go to parent level
+                   "--directory-prefix {1} \\"  # download contents to static/ folder
+                   "--no-host-directories \\"   # don't create domain named folder
+                   "{0}").format(arguments['--domain'], static_path)
 
         os.system(command)
 
@@ -61,7 +63,7 @@ def main():
         # Create a fresh new static files directory
         if os.path.isdir(static_path):
             confirm = raw_input("This will destroy everything inside static/."
-                           " Are you sure you want to continue? (y/N)").strip()
+                                " Are you sure you want to continue? (y/N)").strip()
             if confirm != 'y' or confirm != 'Y':
                 sys.exit(0)
             shutil.rmtree(static_path)
@@ -91,7 +93,8 @@ def main():
         repo.index.commit('Blog update at {}'.format(current_time))
 
         origin = repo.remotes.origin
-        repo.git.execute(['git', 'push', '-u', origin.name, repo.active_branch.name])
+        repo.git.execute(['git', 'push', '-u', origin.name,
+                         repo.active_branch.name])
         print "Good job! Deployed to Github Pages."
 
     elif arguments['add-domain']:

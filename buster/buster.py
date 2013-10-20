@@ -12,13 +12,14 @@ Usage:
 Options:
   -h --help                 Show this screen.
   --version                 Show version.
-  --dir=<path>              Path of directory to store static pages.
+  --dir=<path>              Absolute path of directory to store static pages.
   --domain=<local-address>  Address of local ghost installation [default: local.tryghost.org].
   --gh-repo=<repo-url>      URL of your gh-pages repository.
 """
 
 import os
 import re
+import sys
 import shutil
 import SocketServer
 import SimpleHTTPServer
@@ -29,8 +30,10 @@ from git import Repo
 
 def main():
     arguments = docopt(__doc__, version='0.1')
-    static_path = arguments.get('dir',
-                                os.path.join(os.getcwd(), 'static'))
+    if arguments['--dir'] is not None:
+        static_path = arguments['--dir']
+    else:
+        static_path = os.path.join(os.getcwd(), 'static')
 
     if arguments['generate']:
         command = ("wget \\"
@@ -64,7 +67,7 @@ def main():
         if os.path.isdir(static_path):
             confirm = raw_input("This will destroy everything inside static/."
                                 " Are you sure you want to continue? (y/N)").strip()
-            if confirm != 'y' or confirm != 'Y':
+            if confirm != 'y' and confirm != 'Y':
                 sys.exit(0)
             shutil.rmtree(static_path)
 
@@ -108,7 +111,7 @@ def main():
 
         file_path = os.path.join(static_path, 'CNAME')
         with open(file_path, 'w') as f:
-            f.write(custom_domain)
+            f.write(custom_domain + '\n')
 
         print "Added CNAME file to repo. Use `deploy` to deploy"
 

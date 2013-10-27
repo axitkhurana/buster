@@ -39,7 +39,6 @@ def main():
         command = ("wget \\"
                    "--recursive \\"             # follow links to download entire site
                    "--page-requisites \\"       # grab everything: css / inlined images
-                   "--domains {0} \\"           # don't grab anything outside ghost
                    "--no-parent \\"             # don't go to parent level
                    "--directory-prefix {1} \\"  # download contents to static/ folder
                    "--no-host-directories \\"   # don't create domain named folder

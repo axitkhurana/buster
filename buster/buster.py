@@ -44,8 +44,16 @@ def main():
                    "--directory-prefix {1} \\"  # download contents to static/ folder
                    "--no-host-directories \\"   # don't create domain named folder
                    "{0}").format(arguments['--domain'], static_path)
-
         os.system(command)
+
+        # remove query string since Ghost 0.4
+        file_regex = re.compile(r'.*?(\?.*)')
+        for root, dirs, filenames in os.walk(static_path):
+            for filename in filenames:
+              if file_regex.match(filename):
+                  newname = re.sub(r'\?.*', '', filename)
+                  print "Rename", filename, "=>", newname
+                  os.rename(os.path.join(root, filename), os.path.join(root, newname)) 
 
     elif arguments['preview']:
         os.chdir(static_path)

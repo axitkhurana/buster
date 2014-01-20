@@ -29,7 +29,7 @@ from git import Repo
 
 
 def main():
-    arguments = docopt(__doc__, version='0.1.1')
+    arguments = docopt(__doc__, version='0.1.2')
     if arguments['--dir'] is not None:
         static_path = arguments['--dir']
     else:

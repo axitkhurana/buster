@@ -50,10 +50,10 @@ def main():
         file_regex = re.compile(r'.*?(\?.*)')
         for root, dirs, filenames in os.walk(static_path):
             for filename in filenames:
-              if file_regex.match(filename):
-                  newname = re.sub(r'\?.*', '', filename)
-                  print "Rename", filename, "=>", newname
-                  os.rename(os.path.join(root, filename), os.path.join(root, newname)) 
+                if file_regex.match(filename):
+                    newname = re.sub(r'\?.*', '', filename)
+                    print "Rename", filename, "=>", newname
+                    os.rename(os.path.join(root, filename), os.path.join(root, newname))
 
     elif arguments['preview']:
         os.chdir(static_path)

@@ -20,13 +20,14 @@ Options:
 import os
 import re
 import sys
+import fnmatch
 import shutil
 import SocketServer
 import SimpleHTTPServer
 from docopt import docopt
 from time import gmtime, strftime
 from git import Repo
-
+from pyquery import PyQuery
 
 def main():
     arguments = docopt(__doc__, version='0.1.3')
@@ -55,6 +56,30 @@ def main():
                     newname = re.sub(r'\?.*', '', filename)
                     print "Rename", filename, "=>", newname
                     os.rename(os.path.join(root, filename), os.path.join(root, newname))
+
+        # remove superfluous "index.html" from relative hyperlinks found in text
+        abs_url_regex = re.compile(r'^(?:[a-z]+:)?//', flags=re.IGNORECASE)
+        def fixLinks(text):
+            d = PyQuery(text, parser='html')
+            for element in d('a'):
+                e = PyQuery(element)
+                href = e.attr('href')
+                if not abs_url_regex.search(href):
+                    new_href = re.sub(r'/index\.html$', '/', href)
+                    e.attr('href', new_href)
+                    print "\t", href, "=>", new_href
+            return d.__unicode__().encode('utf8')
+
+        # fix links in all html files
+        for root, dirs, filenames in os.walk(static_path):
+            for filename in fnmatch.filter(filenames, "*.html"):
+                filepath = os.path.join(root, filename)
+                with open(filepath) as f:
+                    filetext = f.read()
+                print "fixing links in ", filepath
+                newtext = fixLinks(filetext)
+                with open(filepath, 'w') as f:
+                    f.write(newtext)
 
     elif arguments['preview']:
         os.chdir(static_path)

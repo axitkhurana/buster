@@ -75,7 +75,7 @@ def main():
             for filename in fnmatch.filter(filenames, "*.html"):
                 filepath = os.path.join(root, filename)
                 with open(filepath) as f:
-                    filetext = f.read()
+                    filetext = f.read().decode('utf8')
                 print "fixing links in ", filepath
                 newtext = fixLinks(filetext)
                 with open(filepath, 'w') as f:

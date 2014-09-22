@@ -23,9 +23,11 @@ import sys
 import shutil
 import SocketServer
 import SimpleHTTPServer
+import fnmatch
 from docopt import docopt
 from time import gmtime, strftime
 from git import Repo
+from pyquery import PyQuery
 
 
 def main():
@@ -54,6 +56,39 @@ def main():
                     newname = re.sub(r'\?.*', '', filename)
                     print "Rename", filename, "=>", newname
                     os.rename(os.path.join(root, filename), os.path.join(root, newname))
+
+         # remove superfluous "index.html" from relative hyperlinks found in text
+        abs_url_regex = re.compile(r'^(?:[a-z]+:)?//', flags=re.IGNORECASE)
+        def fixLinks(text, parser):
+            d = PyQuery(bytes(bytearray(text, encoding='utf-8')), parser=parser)
+            for element in d('a'):
+                e = PyQuery(element)
+                href = e.attr('href')
+                if not abs_url_regex.search(href):
+                    new_href = re.sub(r'rss/index\.html$', 'rss/index.rss', href)
+                    new_href = re.sub(r'/index\.html$', '/', new_href)
+                    e.attr('href', new_href)
+                    print "\t", href, "=>", new_href
+            if parser == 'html':
+                return d.html(method='html').encode('utf8')
+            return d.__unicode__().encode('utf8')
+
+        # fix links in all html files
+        for root, dirs, filenames in os.walk(static_path):
+            for filename in fnmatch.filter(filenames, "*.html"):
+                filepath = os.path.join(root, filename)
+                parser = 'html'
+                if root.endswith("/rss"): #rename rss index.html to index.rss
+                    parser = 'xml'
+                    newfilepath = os.path.join(root, os.path.splitext(filename)[0] + ".rss")
+                    os.rename(filepath, newfilepath)
+                    filepath = newfilepath
+                with open(filepath) as f:
+                    filetext = f.read().decode('utf8')
+                print "fixing links in ", filepath
+                newtext = fixLinks(filetext, parser)
+                with open(filepath, 'w') as f:
+                    f.write(newtext)
 
     elif arguments['preview']:
         os.chdir(static_path)

@@ -8,6 +8,7 @@ Start with a clean, no commits Github repository.
 
 *Generate Static Pages. Preview. Deploy to Github Pages.*
 
+Warning! This project is a hack. It's not official. But it works for me.
 
 The interface
 -------------
@@ -56,6 +57,9 @@ Requirements
 
 -  wget: Use ``brew install wget`` to install wget on your Mac.
    Available by default on most linux distributions.
+
+-  git: Use ``brew install git`` to install git on your Mac.
+   ``sudo apt-get install git`` on ubuntu/debian
 
 The following python packages would be installed automatically when
 installed via ``pip``:

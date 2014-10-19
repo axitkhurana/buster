@@ -13,7 +13,7 @@ Options:
   -h --help                 Show this screen.
   --version                 Show version.
   --dir=<path>              Absolute path of directory to store static pages.
-  --domain=<local-address>  Address of local ghost installation [default: local.tryghost.org].
+  --domain=<local-address>  Address of local ghost installation [default: localhost:2368].
   --gh-repo=<repo-url>      URL of your gh-pages repository.
 """
 
@@ -29,20 +29,20 @@ from git import Repo
 
 
 def main():
-    arguments = docopt(__doc__, version='0.1.2')
+    arguments = docopt(__doc__, version='0.1.3')
     if arguments['--dir'] is not None:
         static_path = arguments['--dir']
     else:
         static_path = os.path.join(os.getcwd(), 'static')
 
     if arguments['generate']:
-        command = ("wget \\"
-                   "--recursive \\"             # follow links to download entire site
-                   "--convert-links \\"         # make links relative
-                   "--page-requisites \\"       # grab everything: css / inlined images
-                   "--no-parent \\"             # don't go to parent level
-                   "--directory-prefix {1} \\"  # download contents to static/ folder
-                   "--no-host-directories \\"   # don't create domain named folder
+        command = ("wget "
+                   "--recursive "             # follow links to download entire site
+                   "--convert-links "         # make links relative
+                   "--page-requisites "       # grab everything: css / inlined images
+                   "--no-parent "             # don't go to parent level
+                   "--directory-prefix {1} "  # download contents to static/ folder
+                   "--no-host-directories "   # don't create domain named folder
                    "{0}").format(arguments['--domain'], static_path)
         os.system(command)
 

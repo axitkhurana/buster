@@ -60,7 +60,7 @@ def main():
         # remove superfluous "index.html" from relative hyperlinks found in text
         abs_url_regex = re.compile(r'^(?:[a-z]+:)?//', flags=re.IGNORECASE)
         def fixLinks(text):
-            d = PyQuery(text, parser='html')
+            d = PyQuery(bytes(bytearray(text, encoding='utf-8')), parser='html')
             for element in d('a'):
                 e = PyQuery(element)
                 href = e.attr('href')
